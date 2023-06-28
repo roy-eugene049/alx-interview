@@ -1,45 +1,47 @@
 #!/usr/bin/python3
+"""
+Module that parses a log and prints stats to stdout
+"""
+from sys import stdin
 
-"""Script that reads stdin line by line and computes metrics"""
+status_codes = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0
+}
 
-import sys
-
-
-def printsts(dic, size):
-    """ WWPrints information """
-    print("File size: {:d}".format(size))
-    for i in sorted(dic.keys()):
-        if dic[i] != 0:
-            print("{}: {:d}".format(i, dic[i]))
-
-
-sts = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0,
-       "404": 0, "405": 0, "500": 0}
-
-count = 0
 size = 0
 
-try:
-    for line in sys.stdin:
-        if count != 0 and count % 10 == 0:
-            printsts(sts, size)
 
-        stlist = line.split()
-        count += 1
-
-        try:
-            size += int(stlist[-1])
-        except:
-            pass
-
-        try:
-            if stlist[-2] in sts:
-                sts[stlist[-2]] += 1
-        except:
-            pass
-    printsts(sts, size)
+def print_stats():
+    """Prints the accumulated logs"""
+    print("File size: {}".format(size))
+    for status in sorted(status_codes.keys()):
+        if status_codes[status]:
+            print("{}: {}".format(status, status_codes[status]))
 
 
-except KeyboardInterrupt:
-    printsts(sts, size)
-    raise
+if __name__ == "__main__":
+    count = 0
+    try:
+        for line in stdin:
+            try:
+                items = line.split()
+                size += int(items[-1])
+                if items[-2] in status_codes:
+                    status_codes[items[-2]] += 1
+            except:
+                pass
+            if count == 9:
+                print_stats()
+                count = -1
+            count += 1
+    except KeyboardInterrupt:
+        print_stats()
+        raise
+    print_stats()

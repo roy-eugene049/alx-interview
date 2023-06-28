@@ -1,31 +1,26 @@
 #!/usr/bin/python3
-"""Calculate the fewest number of operations needed to get n H's in a file"""
+"""
+Minimum Operations
+"""
+
+
 def minOperations(n):
     """
-    Calculate the fewest number of operations needed to get n H's in a file.
-
-    Args:
-        n (int): The number of H's to achieve.
-
-    Returns:
-        int: The fewest number of operations needed to get n H's, or 0 if impossible.
+    In a text file, there is a single character H.
+    Your text editor can execute only two operations in this file:
+    Copy All and Paste. Given a number n, write a method that calculates
+    the fewest number of operations needed to result in exactly n H characters
+    in the file
     """
-    if n < 1:
-        return 0  # impossible to achieve
-    num_h = 1  # start with one H
-    ops = 0  # number of operations performed
-    clipboard = 0  # number of H characters in clipboard
-    while num_h < n:
-        if clipboard > 0:
-            # if there are H characters in clipboard, paste them
-            num_h += clipboard
-            clipboard = 0
-            ops += 1
+
+    if n <= 1:
+        return 0
+    num, div, numOfOperations = n, 2, 0
+
+    while num > 1:
+        if num % div == 0:
+            num = num / div
+            numOfOperations = numOfOperations + div
         else:
-            # if clipboard is empty, copy all H characters
-            clipboard = num_h
-            ops += 1
-        if num_h == n:
-            # if desired number of H characters is reached, return number of operations
-            return ops
-    return 0  # impossible to achieve
+            div += 1
+    return numOfOperations
